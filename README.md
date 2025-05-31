@@ -16,15 +16,15 @@ An end-to-end NLP-based resume classification pipeline with MLOps and deployment
 
 ## Folder Structure
 resume-screener-mlops/
-├── data/              # Raw + processed data
-├── notebooks/         # Jupyter exploration
-├── models/            # Saved models
-├── outputs/           # Metrics, logs, results
+├── data/             
+├── notebooks/       
+├── models/          
+├── outputs/          
 ├── src/
-│   ├── preprocessing/ # Cleaning & feature extraction
-│   ├── training/      # Training pipeline
-│   ├── api/           # FastAPI app
-│   └── utils/         # Reusable functions
+│   ├── preprocessing/ 
+│   ├── training/     
+│   ├── api/          
+│   └── utils/       
 ├── .gitignore
 ├── requirements.txt
 ├── README.md
