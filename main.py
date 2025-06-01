@@ -1,24 +1,47 @@
 from src.ingestion.loader import load_resumes
-from src.preprocessing.cleaner import clean_text, extract_skills
+from src.preprocessing.spacy_cleaner import spacy_clean_text
+from src.preprocessing.cleaner import extract_skills
+from src.utils.text_extraction import extract_text
+import os
 import json
 
-resumes = load_resumes("data/raw/resumes")
+RAW_RESUME_DIR = "data/raw/resumes"
+PROCESSED_JSON_PATH = "data/processed/cleaned_resumes.json"
 
-structured = []
+def main():
+    resumes = []
 
-for r in resumes:
-    cleaned = clean_text(r["content"])
-    skills = extract_skills(cleaned)
+    # Load resumes by extracting raw text from files
+    for filename in os.listdir(RAW_RESUME_DIR):
+        file_path = os.path.join(RAW_RESUME_DIR, filename)
+        try:
+            content = extract_text(file_path)
+            resumes.append({"filename": filename, "content": content})
+            print(f"Extracted text from {filename}")
+        except Exception as e:
+            print(f"Failed to extract text from {filename}: {e}")
 
-    structured.append({
-        "filename": r["filename"],
-        "original_length": len(r["content"]),
-        "cleaned_length": len(cleaned),
-        "skills": skills,
-        "cleaned_text": cleaned
-    })
+    structured = []
 
-with open("data/processed/cleaned_resumes.json", "w", encoding="utf-8") as f:
-    json.dump(structured, f, indent=2, ensure_ascii=False)
+    # Clean and extract skills
+    for r in resumes:
+        cleaned = spacy_clean_text(r["content"])
+        skills = extract_skills(cleaned)
 
-print("✅ Cleaned resumes and extracted skills saved to data/processed/cleaned_resumes.json")
+        structured.append({
+            "filename": r["filename"],
+            "original_length": len(r["content"]),
+            "cleaned_length": len(cleaned),
+            "skills": skills,
+            "cleaned_text": cleaned
+        })
+
+    # Save processed resumes as JSON
+    os.makedirs(os.path.dirname(PROCESSED_JSON_PATH), exist_ok=True)
+    with open(PROCESSED_JSON_PATH, "w", encoding="utf-8") as f:
+        json.dump(structured, f, indent=2, ensure_ascii=False)
+
+    print(f"✅ Cleaned resumes and extracted skills saved to {PROCESSED_JSON_PATH}")
+
+if __name__ == "__main__":
+    main()
