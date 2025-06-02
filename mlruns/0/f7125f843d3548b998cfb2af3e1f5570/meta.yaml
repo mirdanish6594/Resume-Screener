@@ -1,0 +1,15 @@
+artifact_uri: file:///home/mirdanish/Documents/Resume-Screener/mlruns/0/f7125f843d3548b998cfb2af3e1f5570/artifacts
+end_time: 1748844626557
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: f7125f843d3548b998cfb2af3e1f5570
+run_name: Logistic Regression
+run_uuid: f7125f843d3548b998cfb2af3e1f5570
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1748844623902
+status: 3
+tags: []
+user_id: mirdanish

@@ -2,6 +2,9 @@ from src.ingestion.loader import load_resumes
 from src.preprocessing.spacy_cleaner import spacy_clean_text
 from src.preprocessing.cleaner import extract_skills
 from src.utils.text_extraction import extract_text
+from src.training.clustering import cluster_resumes, assign_clusters
+from src.preprocessing.vectorizer import build_vectorizer, save_vectorizer
+
 import os
 import json
 
@@ -42,6 +45,26 @@ def main():
         json.dump(structured, f, indent=2, ensure_ascii=False)
 
     print(f"✅ Cleaned resumes and extracted skills saved to {PROCESSED_JSON_PATH}")
+
+    # --- VECTORIZE cleaned texts ---
+    texts = [r["cleaned_text"] for r in structured]
+    vectorizer, vectors = build_vectorizer(texts)
+
+    # Save vectorizer for later use
+    save_vectorizer(vectorizer)
+
+    # --- CLUSTER resumes ---
+    model, labels = cluster_resumes(vectors)
+    structured = assign_clusters(structured, labels)
+
+    print("✅ Clustering done and clusters assigned.")
+
+    # Optionally, save clustered resumes with labels
+    clustered_path = "outputs/clustered_resumes.json"
+    os.makedirs(os.path.dirname(clustered_path), exist_ok=True)
+    with open(clustered_path, "w", encoding="utf-8") as f:
+        json.dump(structured, f, indent=2, ensure_ascii=False)
+    print(f"✅ Clustered resumes saved to {clustered_path}")
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,18 @@
+stages:
+  preprocess:
+    cmd: python src/training/preprocess.py
+    deps:
+    - data/raw/resumes.json
+    outs:
+    - data/processed/cleaned_resumes.json
+  train:
+    cmd: python src/training/train.py
+    deps:
+    - data/processed/cleaned_resumes.json
+    outs:
+    - models/best_model.joblib
+  evaluate:
+    cmd: python src/training/evaluate.py
+    deps:
+    - data/processed/cleaned_resumes.json
+    - models/best_model.joblib

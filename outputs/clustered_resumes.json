@@ -1,0 +1,59 @@
+[
+  {
+    "filename": "resume1.pdf",
+    "original_length": 3283,
+    "cleaned_length": 2512,
+    "skills": [
+      "machine learning",
+      "tensorflow",
+      "flask",
+      "python",
+      "java",
+      "sql",
+      "opencv",
+      "azure",
+      "pytorch",
+      "git"
+    ],
+    "cleaned_text": "danish mir portfolio linkedin github education national institute technology srinagar jammu kashmir bachelor technology chemical engineering oct oct experience web developer graphic designer oct nov curve electric internship srinagar jammu kashmir lead redesign curve electric website enhance user interface overall appeal create impactful design poster electric cycle startup sustainability campaign serve web developer graphic designer contribute visual digital project artificial intelligence intern aug sep coincent srinagar jammu kashmir implement vision transformer vit model image classification dataset include patch base image processing self attention mechanism positional embedding preprocesse augment dataset resize image normalizing apply technique like random flipping rotation zoom enhance model performance train evaluate model adamw optimizer achieve high accuracy project gulshanedu react javascript html css git dec jan develop responsive user friendly educational website gulshan educational society focus showcase academic program admission extracurricular activity implement modern end react ensure seamless navigation interactive user experience device collaborate client align website design functionality branding content requirement authentication system python flask opencv pyzbar postgresql git aug sep develop flask base web application event attendance tracking utilize real time qr code scanning optional barcode attachment secure attendee authentication integrate postgresql db management attendance record flask sqlalchemy handling database interaction implement camera feed processing opencv pyzbar real time qr decode user friendly control event organizer manage attendance datum snakeai python flask pygame pytorch matplotlib git sep oct develop ai agent capable autonomously play snake learn optimal strategy q learning engineer customizable environment train agent focus maximize game score implement real time monitoring visualization track agent learn progress performance certification microsoft certify azure ai fundamental artificial intelligence python supervise machine learning regression classification contributor girlscript summer code skill web development html css javascript react bootstrap rest apis language tool python flask git postgresql c library framework numpy panda tensorflow opencv matplotlib seaborn scikit learn pygame technology github vs code soft skill critical thinking data drive decision making problem solve communication analytical finding",
+    "cluster": 2
+  },
+  {
+    "filename": "resume2.doc",
+    "original_length": 2961,
+    "cleaned_length": 1143,
+    "skills": [
+      "java",
+      "git",
+      "sql",
+      "python"
+    ],
+    "cleaned_text": "john gonalez python developer contact pittsburgh pa linkedin github education computer science university chicago chicago il computer science university pittsburgh pittsburgh pa skill css sql postgresql oracle javascript angular python django rest apis graphql aw redshift git career objective experience python developer extensive django experience look continue develop skill set end company drive address climate crisis work experience python developer september current chicago il build new angular component web app improve time page user minute agile team help prioritize scope request ensure big impact extensive test coverage new feature reduce number customer complaint python developer knewton april september pittsburgh pa work alongside developer implement restful apis django enable internal analytic team increase report speed selenium build unit test infrastructure client web application reduce number bug report client month month project cryptocurrency price tracker creator incorporate api call application store datum eﬃciently postgresql backend utilize allow user dynamically visualize price movement time period choosing",
+    "cluster": 0
+  },
+  {
+    "filename": "resume3.docx",
+    "original_length": 2230,
+    "cleaned_length": 1595,
+    "skills": [
+      "java",
+      "azure"
+    ],
+    "cleaned_text": "james caldroy phone professional summary skilled web developer create high converting landing page web page focus user experience year ecommerce experience range sme able complete project face pace maintain high standard quality skill application web server tomcat apache web development language html java php prototyping tool azure management skill user requirement gather project management peer mentoring professional experience axis web consultant march present lead consultant lead website rewrite auto part supplier united states assist multiple small business convert woocommerce shopify manage development land page large wholesale grocer increase average conversion page hawthorn industry june march internal web developer design develop maintain company intranet page team leader creation hawthorn europe page key deliverable company expansion european market develop publish web development design testing standard result few post deployment bug education university iowa bachelor science web development gpa gold medal winner student web development challenge vice president uof web developer association complete web design internship enterprise holding project review follow code sample screenshot noteworthy project create online customer satisfaction survey national urgent care clinic assist des moines area non profit increase online donation web app interface facebook messenger develop series web page streamline application process des moines community college dear job seeker struggle write resume worry good company struggle hire certify professional resume writer resume",
+    "cluster": 1
+  },
+  {
+    "filename": "resume4.doc",
+    "original_length": 3523,
+    "cleaned_length": 990,
+    "skills": [
+      "python",
+      "java",
+      "sql",
+      "aws",
+      "git"
+    ],
+    "cleaned_text": "karla lewis end web developer contact brooklyn ny linkedin github education bachelor science computer science rutger university pittsburgh pa skill javascript react redux css html ci cd python django sql postgresql mysql cloud aws typescript work experience end developer august current brooklyn ny multi page user experience page app customer engagement product tour react new improve adoption lead m revenue step product process development improvement reach user datum science develop product engine increase user time minute engineer august august pittsburgh pa selenium build unit testing client application reduce number user report bug month ui internal tool refund help customer experience team improve refund speed alongside developer implement apis enable internal analytic team reporting engineer intern life april august pittsburgh restful apis serve datum react end base dynamically input app concurrent user internal tool automate qa monitoring face web app improve click rate",
+    "cluster": 0
+  }
+]
