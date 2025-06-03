@@ -1,4 +1,4 @@
-#!/home/mirdanish/Downloads/Resume-Screener/venv/bin/python
+#!/home/mirdanish/Documents/Resume-Screener/venv/bin/python3.11
 """Extract pdf structure in XML format"""
 
 import logging

@@ -1,4 +1,4 @@
-#!/home/mirdanish/Downloads/Resume-Screener/venv/bin/python
+#!/home/mirdanish/Documents/Resume-Screener/venv/bin/python3.11
 """A command line tool for extracting text and images from PDF and
 output it to plain text, html, xml or tags.
 """

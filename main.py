@@ -1,70 +1,75 @@
-from src.ingestion.loader import load_resumes
-from src.preprocessing.spacy_cleaner import spacy_clean_text
-from src.preprocessing.cleaner import extract_skills
-from src.utils.text_extraction import extract_text
-from src.training.clustering import cluster_resumes, assign_clusters
-from src.preprocessing.vectorizer import build_vectorizer, save_vectorizer
+# main.py
 
 import os
-import json
+import pickle
+import re
+import shutil
+import fitz  # PyMuPDF for PDF parsing
+import nltk
+from nltk.corpus import stopwords
+from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import JSONResponse
 
-RAW_RESUME_DIR = "data/raw/resumes"
-PROCESSED_JSON_PATH = "data/processed/cleaned_resumes.json"
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
 
-def main():
-    resumes = []
+# --- Load model and vectorizer ---
+MODEL_PATH = "models/model.pkl"
+VECTORIZER_PATH = "models/vectorizer.pkl"
 
-    # Load resumes by extracting raw text from files
-    for filename in os.listdir(RAW_RESUME_DIR):
-        file_path = os.path.join(RAW_RESUME_DIR, filename)
-        try:
-            content = extract_text(file_path)
-            resumes.append({"filename": filename, "content": content})
-            print(f"Extracted text from {filename}")
-        except Exception as e:
-            print(f"Failed to extract text from {filename}: {e}")
+with open(MODEL_PATH, "rb") as f:
+    model = pickle.load(f)
+with open(VECTORIZER_PATH, "rb") as f:
+    vectorizer = pickle.load(f)
 
-    structured = []
+# --- Initialize FastAPI ---
+app = FastAPI()
 
-    # Clean and extract skills
-    for r in resumes:
-        cleaned = spacy_clean_text(r["content"])
-        skills = extract_skills(cleaned)
+# --- Preprocessing ---
+def clean_text(text):
+    text = str(text).lower()
+    text = re.sub(r'http\S+|www\S+', '', text)
+    text = re.sub(r'[^a-z\s]', '', text)
+    text = re.sub(r'\s+', ' ', text)
+    tokens = text.split()
+    tokens = [word for word in tokens if word not in stop_words]
+    return ' '.join(tokens)
 
-        structured.append({
-            "filename": r["filename"],
-            "original_length": len(r["content"]),
-            "cleaned_length": len(cleaned),
-            "skills": skills,
-            "cleaned_text": cleaned
-        })
+def extract_text_from_pdf(file_path):
+    text = ""
+    try:
+        with fitz.open(file_path) as doc:
+            for page in doc:
+                text += page.get_text()
+    except Exception as e:
+        print(f"Error reading PDF: {e}")
+    return text
 
-    # Save processed resumes as JSON
-    os.makedirs(os.path.dirname(PROCESSED_JSON_PATH), exist_ok=True)
-    with open(PROCESSED_JSON_PATH, "w", encoding="utf-8") as f:
-        json.dump(structured, f, indent=2, ensure_ascii=False)
+# --- Routes ---
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to Resume Screener API"}
 
-    print(f"✅ Cleaned resumes and extracted skills saved to {PROCESSED_JSON_PATH}")
+@app.post("/predict")
+async def predict(file: UploadFile = File(...)):
+    try:
+        # Save uploaded PDF temporarily
+        temp_path = "temp_resume.pdf"
+        with open(temp_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
 
-    # --- VECTORIZE cleaned texts ---
-    texts = [r["cleaned_text"] for r in structured]
-    vectorizer, vectors = build_vectorizer(texts)
+        # Extract text and clean it
+        raw_text = extract_text_from_pdf(temp_path)
+        clean_resume = clean_text(raw_text)
 
-    # Save vectorizer for later use
-    save_vectorizer(vectorizer)
+        # Vectorize and predict
+        vectorized = vectorizer.transform([clean_resume])
+        prediction = model.predict(vectorized)[0]
 
-    # --- CLUSTER resumes ---
-    model, labels = cluster_resumes(vectors)
-    structured = assign_clusters(structured, labels)
+        # Remove temp file
+        os.remove(temp_path)
 
-    print("✅ Clustering done and clusters assigned.")
+        return {"predicted_job_role": prediction}
 
-    # Optionally, save clustered resumes with labels
-    clustered_path = "outputs/clustered_resumes.json"
-    os.makedirs(os.path.dirname(clustered_path), exist_ok=True)
-    with open(clustered_path, "w", encoding="utf-8") as f:
-        json.dump(structured, f, indent=2, ensure_ascii=False)
-    print(f"✅ Clustered resumes saved to {clustered_path}")
-
-if __name__ == "__main__":
-    main()
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": str(e)})
