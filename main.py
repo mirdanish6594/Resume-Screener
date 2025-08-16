@@ -103,59 +103,44 @@ async def health_check():
         "service": "Resume Screener API v2"
     }
 
-@app.post("/predict", summary="Predict from File or Text")
-async def predict(
-    file: Optional[UploadFile] = File(None, description="A resume file (PDF or DOCX)"),
-    resume_data: Optional[ResumeText] = Body(None, description="A JSON object with resume text")
+@app.post("/predict-upload", summary="Predict from Resume File")
+async def predict_upload(
+    file: UploadFile = File(..., description="A resume file (PDF or DOCX)")
 ):
-    """
-    Predicts the job role from either an uploaded resume file or raw text.
-    - Provide a file OR a text body, but not both.
-    """
-    if not (file or resume_data):
-        raise HTTPException(400, detail="Please provide either a file or text data.")
-    if file and resume_data:
-        raise HTTPException(400, detail="Provide either a file or text data, not both.")
-
+    """Predicts the job role from an uploaded resume file (PDF or DOCX)."""
     raw_text = ""
 
-    # --- Process File Upload ---
-    if file:
-        # Validate file type
-        file_ext = Path(file.filename).suffix.lower()
-        if file_ext not in ['.pdf', '.docx', '.doc']:
-            raise HTTPException(400, detail="Invalid file type. Please upload a .pdf or .docx file.")
+    # Validate file type
+    file_ext = Path(file.filename).suffix.lower()
+    if file_ext not in ['.pdf', '.docx', '.doc']:
+        raise HTTPException(400, detail="Invalid file type. Please upload a .pdf or .docx file.")
+    
+    temp_path = TEMP_DIR / f"temp_{os.urandom(8).hex()}{file_ext}"
+    try:
+        # Save file securely
+        with temp_path.open("wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
         
-        temp_path = TEMP_DIR / f"temp_{os.urandom(8).hex()}{file_ext}"
-        try:
-            # Save file securely
-            with temp_path.open("wb") as buffer:
-                shutil.copyfileobj(file.file, buffer)
-            
-            if temp_path.stat().st_size == 0:
-                raise HTTPException(400, detail="Empty file uploaded.")
-            
-            # Extract text based on file type
-            if file_ext == '.pdf':
-                raw_text = extract_text_from_pdf(temp_path)
-            elif file_ext in ['.docx', '.doc']:
-                raw_text = extract_text_from_docx(temp_path)
+        if temp_path.stat().st_size == 0:
+            raise HTTPException(400, detail="Empty file uploaded.")
         
-        finally:
-            # Always clean up the temporary file
-            if temp_path.exists():
-                temp_path.unlink()
+        # Extract text based on file type
+        if file_ext == '.pdf':
+            raw_text = extract_text_from_pdf(temp_path)
+        elif file_ext in ['.docx', '.doc']:
+            raw_text = extract_text_from_docx(temp_path)
+    
+    finally:
+        # Always clean up the temporary file
+        if temp_path.exists():
+            temp_path.unlink()
 
-    # --- Process Text Input ---
-    elif resume_data:
-        raw_text = resume_data.text
-
-    # --- Common Prediction Logic ---
+    # Prediction
     if not raw_text or not raw_text.strip():
-        raise HTTPException(400, detail="Could not extract any text from the provided input.")
+        raise HTTPException(400, detail="Could not extract any text from the uploaded file.")
 
     clean_resume = clean_text(raw_text)
-    if len(clean_resume.split()) < 15: # Check for minimum content length
+    if len(clean_resume.split()) < 15:
         raise HTTPException(400, detail=f"Insufficient text content for a reliable prediction (found {len(clean_resume.split())} words).")
 
     try:
@@ -166,7 +151,37 @@ async def predict(
         return {
             "predicted_role": str(prediction),
             "confidence": float(confidence),
-            "processed_text_length": len(clean_resume)
+            "processed_text_length": len(clean_resume),
+            "source": "file-upload"
+        }
+    except Exception as e:
+        logger.error(f"Prediction failed: {str(e)}")
+        raise HTTPException(500, detail="An error occurred during the prediction process.")
+
+@app.post("/predict-text", summary="Predict from Pasted Resume Text")
+async def predict_text(
+    resume_data: ResumeText = Body(..., description="A JSON object with resume text")
+):
+    """Predicts the job role from pasted resume text."""
+    raw_text = resume_data.text
+
+    if not raw_text or not raw_text.strip():
+        raise HTTPException(400, detail="No text provided for prediction.")
+
+    clean_resume = clean_text(raw_text)
+    if len(clean_resume.split()) < 15:
+        raise HTTPException(400, detail=f"Insufficient text content for a reliable prediction (found {len(clean_resume.split())} words).")
+
+    try:
+        vectorized = vectorizer.transform([clean_resume])
+        prediction = model.predict(vectorized)[0]
+        confidence = model.predict_proba(vectorized).max()
+        
+        return {
+            "predicted_role": str(prediction),
+            "confidence": float(confidence),
+            "processed_text_length": len(clean_resume),
+            "source": "text-input"
         }
     except Exception as e:
         logger.error(f"Prediction failed: {str(e)}")
