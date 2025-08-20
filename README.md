@@ -193,8 +193,8 @@ Contributions are welcome! If you'd like to help improve the project, please fol
 
 - Open a Pull Request.
 
-# License
+## License
 This project is licensed under the MIT License. See the LICENSE file for more details.
 
-# Contact
+## Contact
 Created by Danish Mir - feel free to reach out with any questions or collaboration ideas!
