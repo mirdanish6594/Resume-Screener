@@ -21,7 +21,7 @@ The project features a decoupled architecture with a Python/FastAPI backend for 
 ---
 
 ## Live Demo
-**([https://resumescreenerai.netlify.app/])**
+***[https://resumescreenerai.netlify.app/]***
 
 ---
 
