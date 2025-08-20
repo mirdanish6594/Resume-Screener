@@ -101,7 +101,7 @@ v                                       |
 ### Setup Steps
 1.  **Clone the repository:**
     ```bash
-    git clone [https://github.com/mirdanish6594/Resume-Screener.git](https://github.com/mirdanish6594/Resume-Screener.git)
+    git clone https://github.com/mirdanish6594/Resume-Screener.git
     cd Resume-Screener
     ```
 
@@ -151,10 +151,10 @@ v                                       |
 ### Using Docker
 You can build and run the backend service using Docker.
 
-# Build the Docker image
+### Build the Docker image
 ```docker build -t resume-screener-api ```
 
-# Run the container
+### Run the container
 ```docker run -d -p 8000:8000 resume-screener-api```
 API Endpoints
 The backend provides the following endpoints:
@@ -167,7 +167,7 @@ The backend provides the following endpoints:
 
 ```POST /predict-upload:``` Accepts a file upload (.pdf, .docx) and returns a predicted job role.
 
-# Future Work
+## Future Work
 - This project has a solid foundation, and future enhancements could include:
 
 - CI/CD Integration: Automate testing and deployment using GitHub Actions to both Render and Netlify.
@@ -180,7 +180,7 @@ The backend provides the following endpoints:
 
 - HR Dashboard: Create a secure dashboard for recruiters to manage multiple resumes, track candidates, and view analytics.
 
-# Contributing
+## Contributing
 Contributions are welcome! If you'd like to help improve the project, please follow these steps:
 
 - Fork the repository.
