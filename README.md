@@ -1,239 +1,202 @@
+# AI-Powered Resume Screener
 
-# Resume Screener MLOps Project
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
+An intelligent application designed to automate the initial stages of recruitment. This tool predicts a candidate's most likely job role from their resume and provides detailed, AI-driven feedback to help them improve it.
 
-Resume Screener is an AI-powered MLOps project designed to automate the resume screening process for HR teams and recruitment portals. This project aims to build an end-to-end machine learning pipeline that can process resumes, extract relevant information, classify candidates based on job requirements, and provide analytics to optimize hiring decisions.
-
-This README serves as detailed documentation covering the project's architecture, installation, usage, components, and future improvements.
+The project features a decoupled architecture with a Python/FastAPI backend for core model inference and a React frontend for user interaction and advanced analysis via the Hugging Face API.
 
 ---
 
 ## Table of Contents
-
-- [Project Motivation](#project-motivation)
+- [Live Demo](#live-demo)
 - [Features](#features)
 - [Architecture](#architecture)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Components](#components)
-- [Data Processing Pipeline](#data-processing-pipeline)
-- [Model Training and Evaluation](#model-training-and-evaluation)
-- [MLOps Practices](#mlops-practices)
-- [Deployment](#deployment)
 - [Technologies Used](#technologies-used)
+- [Installation and Setup](#installation-and-setup)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Future Work](#future-work)
 - [Contributing](#contributing)
 - [License](#license)
 
 ---
 
-## Project Motivation
-
-Recruiting the right talent quickly is a critical business need. Manual resume screening is time-consuming and prone to human bias. This project automates resume evaluation, enabling faster, unbiased, and data-driven hiring decisions.
+## Live Demo
+**(Add your Netlify deployment link here)**
 
 ---
 
 ## Features
-
-- Automated resume parsing and feature extraction
-- Candidate classification using ML models
-- Pipeline orchestration for data preprocessing, training, and inference
-- Model versioning and deployment using Docker and cloud platforms
-- Continuous model monitoring and retraining
-- Scalable and reusable modular code design
-- Web interface for HR users (planned)
+-   **Automated Role Prediction**: Upload a resume (PDF) or paste its text to get an instant prediction of the most suitable job category (e.g., Data Scientist, Software Engineer).
+-   **Client-Side PDF Parsing**: Efficiently extracts text from PDF files directly in the browser using `pdf.js` for quick processing.
+-   **Advanced AI Analysis**: Leverages multiple Hugging Face models to provide a comprehensive resume review, including:
+    -   A contextual score out of 100.
+    -   Key strengths and achievements.
+    -   Actionable, prioritized suggestions for improvement.
+    -   Identification of missing key elements (e.g., GitHub link, quantifiable metrics).
+    -   Role-specific advice tailored to the predicted job category.
+-   **RESTful Backend**: A robust FastAPI backend serves the primary classification model, containerized with Docker for scalability and portability.
+-   **Decoupled Frontend**: A modern and responsive React frontend deployed on Netlify for a smooth user experience.
 
 ---
 
 ## Architecture
+The system is built with a decoupled frontend and backend, interacting with external AI services for enhanced analysis.
 
-The system is composed of several modules working together:
-
-1. **Data Ingestion**: Collect resumes and job descriptions
-2. **Data Processing**: Extract features from resumes (e.g., skills, experience)
-3. **Model Training**: Train classification models with hyperparameter tuning
-4. **Model Evaluation**: Validate model performance on test data
-5. **Deployment**: Containerize models using Docker and deploy to cloud
-6. **Monitoring**: Track model accuracy and drift, trigger retraining
-7. **User Interface**: Web frontend for HR interaction (future)
-
-Diagram:
-
+1.  **Frontend (React on Netlify)**: The user interacts with the React application. They can either upload a PDF or paste resume text. The frontend's `pdf.js` library extracts the text client-side.
+2.  **Backend API (FastAPI on Render)**: The extracted text is sent to our FastAPI backend. The backend cleans the text, vectorizes it using a saved TF-IDF vectorizer, and predicts the job role using a pre-trained Scikit-learn classification model. The predicted role is returned to the frontend.
+3.  **Hugging Face API**: The frontend then takes the original resume text and the predicted role and makes direct calls to the Hugging Face Inference API. It queries multiple models to perform skill extraction, experience level classification, and generate strengths and improvement suggestions.
+4.  **Display Results**: All results—the predicted role from the backend and the detailed analysis from Hugging Face—are compiled and displayed to the user.
 ```
-Resumes + Job Data
-       ↓
-Data Processing & Feature Engineering
-       ↓
-ML Model Training & Validation
-       ↓
-Model Deployment (Docker + Cloud)
-       ↓
-Inference & Monitoring
-       ↓
-Retraining Loop
++--------------------------------+      +---------------------------------+
+|      Frontend (React)          |      |    Hugging Face Inference API   |
+|      (Deployed on Netlify)     |      |  (For detailed analysis)        |
++--------------------------------+      +---------------------------------+
+| 1. User uploads PDF/pastes text|      | 4. Frontend sends text & role   |
+| 2. Client-side text extraction |----->|    for detailed AI feedback     |
+| 3. Sends text to Backend API...|      | 5. Receives score, strengths,   |
++-----------------|--------------+      |    and improvement suggestions  |
+|                     +-----------------^---------------+
+v                                       |
++--------------------------------+                        |
+|       Backend API (FastAPI)    |                        |
+|   (Dockerized on Render)       |                        |
++--------------------------------+                        |
+| - Receives text                |                        |
+| - Cleans & vectorizes          |                        |
+| - Predicts role with SKLearn   |                        |
+| - Returns predicted role       |------------------------+
++--------------------------------+
 ```
+
+## Technologies Used
+-   **Backend**:
+    -   Python 3.8+
+    -   FastAPI
+    -   Scikit-learn
+    -   PyMuPDF (Fitz), python-docx
+    -   NLTK
+-   **Frontend**:
+    -   React (with Vite)
+    -   TypeScript
+    -   pdf.js
+-   **AI & ML**:
+    -   Scikit-learn (for role classification)
+    -   Hugging Face Inference API (for generative analysis)
+-   **Deployment & DevOps**:
+    -   Docker
+    -   Render (for Backend Hosting)
+    -   Netlify (for Frontend Hosting)
+    -   Git & GitHub (for Version Control)
 
 ---
 
-## Installation
+## Installation and Setup
 
 ### Prerequisites
+-   Python 3.8+ and Pip
+-   Node.js and npm/yarn
+-   Git
+-   Docker (Recommended)
 
-- Python 3.8+
-- Git
-- Docker (optional but recommended for deployment)
-- Cloud account (AWS/GCP/Azure) for model hosting (optional)
+### Setup Steps
+1.  **Clone the repository:**
+    ```bash
+    git clone [https://github.com/mirdanish6594/Resume-Screener.git](https://github.com/mirdanish6594/Resume-Screener.git)
+    cd Resume-Screener
+    ```
 
-### Setup steps
+2.  **Setup Backend:**
+    -   Navigate to the backend directory (if separate).
+    -   Create and activate a Python virtual environment:
+        ```bash
+        python3 -m venv venv
+        source venv/bin/activate  # On Windows: venv\Scripts\activate
+        ```
+    -   Install backend dependencies:
+        ```bash
+        pip install -r requirements.txt
+        ```
 
-1. Clone repository:
-
-```bash
-git clone https://github.com/mirdanish6594/Resume-Screener.git
-cd Resume-Screener
-```
-
-2. Create and activate a Python virtual environment:
-
-```bash
-python3 -m venv venv
-source venv/bin/activate  # Linux/macOS
-# OR
-venv\Scripts\activate   # Windows
-```
-
-3. Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-4. Run the initial bootstrapping script:
-
-```bash
-python main.py
-```
-
-This sets up the initial project structure and prepares data directories.
+3.  **Setup Frontend:**
+    -   Navigate to the frontend directory.
+    -   Create a `.env` file in the root of the frontend folder.
+    -   Add your Hugging Face API key to the `.env` file:
+        ```
+        REACT_APP_HF_API_KEY="your_hugging_face_api_key_here"
+        ```
+    -   Install frontend dependencies:
+        ```bash
+        npm install
+        ```
 
 ---
 
 ## Usage
 
-### Running the pipeline
+### Running Locally
+1.  **Start the Backend Server:**
+    From the backend directory, run:
+    ```bash
+    uvicorn main:app --reload
+    ```
+    The API will be available at `http://127.0.0.1:8000`.
 
-The main entry point `main.py` orchestrates the pipeline. You can run:
+2.  **Start the Frontend Application:**
+    From the frontend directory, run:
+    ```bash
+    npm run dev
+    ```
+    The application will be accessible at `http://localhost:5173` (or another port if specified).
 
-```bash
-python main.py --train
-python main.py --inference
-```
+### Using Docker
+You can build and run the backend service using Docker.
 
-### Project Structure
+# Build the Docker image
+```docker build -t resume-screener-api ```
 
-- `data/` - folder containing input resumes and job descriptions
-- `src/` - source code for data processing, model training, evaluation
-- `models/` - saved trained models and version control
-- `notebooks/` - Jupyter notebooks for experimentation
-- `deployment/` - Dockerfiles and cloud deployment scripts
+# Run the container
+```docker run -d -p 8000:8000 resume-screener-api```
+API Endpoints
+The backend provides the following endpoints:
 
----
+```GET /:``` Health check to confirm the API is running and models are loaded.
 
-## Components
+```POST /predict-text:``` Accepts a JSON payload with raw text and returns a predicted job role.
 
-### Data Processing
+```Body: { "text": "your resume text here..." }```
 
-- Parsing resumes (PDF/DOCX) using libraries like `pdfminer` or `python-docx`
-- Extracting key information (skills, education, experience)
-- Converting text data into numerical features using TF-IDF, embeddings
+```POST /predict-upload:``` Accepts a file upload (.pdf, .docx) and returns a predicted job role.
 
-### Model Training
+# Future Work
+- This project has a solid foundation, and future enhancements could include:
 
-- Using Scikit-learn, XGBoost, or LightGBM for candidate classification
-- Hyperparameter tuning using `GridSearchCV` or `Optuna`
-- Cross-validation to ensure model robustness
+- CI/CD Integration: Automate testing and deployment using GitHub Actions to both Render and Netlify.
 
-### MLOps Integration
+- Model Monitoring & Retraining: Implement tools like MLflow or DVC to track model performance and set up a pipeline for automated retraining on new data.
 
-- CI/CD pipelines for automated testing and deployment
-- Model versioning with MLflow or DVC
-- Monitoring models for performance degradation
+- RAG Implementation: Integrate a Retrieval-Augmented Generation (RAG) system to match resumes against specific job descriptions for more granular analysis.
 
-### Deployment
+- Database Integration: Store prediction results and user feedback in a database to track model accuracy and gather data for retraining.
 
-- Docker containerization of models and APIs
-- Serving models via Flask/FastAPI REST endpoints
-- Deployment on cloud services (AWS ECS, GCP Cloud Run, Azure App Service)
+- HR Dashboard: Create a secure dashboard for recruiters to manage multiple resumes, track candidates, and view analytics.
 
----
+# Contributing
+Contributions are welcome! If you'd like to help improve the project, please follow these steps:
 
-## Data Processing Pipeline
+- Fork the repository.
 
-- Load raw resumes and job descriptions
-- Clean and preprocess text (remove stopwords, stemming)
-- Feature engineering (skills extraction, keyword matching)
-- Vectorize features using TF-IDF or word embeddings
-- Split data into train/test sets
+- Create a new feature branch (git checkout -b feature/AmazingFeature).
 
----
+- Commit your changes (git commit -m 'Add some AmazingFeature').
 
-## Model Training and Evaluation
+- Push to the branch (git push origin feature/AmazingFeature).
 
-- Train ML classifiers on the processed dataset
-- Evaluate using metrics: accuracy, precision, recall, F1-score
-- Save best performing model to `models/` directory
-- Use model explainability tools (SHAP, LIME) for insights
+- Open a Pull Request.
 
----
+# License
+This project is licensed under the MIT License. See the LICENSE file for more details.
 
-## MLOps Practices
-
-- Automate data and model validation tests
-- Use CI/CD pipelines (GitHub Actions, Jenkins) for deployment
-- Implement logging and monitoring (Prometheus, Grafana)
-- Set up model retraining schedules based on drift detection
-
----
-
-## Deployment
-
-- Build Docker images for model serving
-- Push images to container registries (DockerHub, ECR)
-- Deploy to cloud platforms with autoscaling
-- Secure API endpoints with authentication
-
----
-
-## Technologies Used
-
-- Python 3.x
-- Scikit-learn, XGBoost, LightGBM
-- Pandas, NumPy
-- Flask/FastAPI for API serving
-- Docker, Kubernetes (optional)
-- Cloud platforms (AWS, GCP, Azure)
-- Git, GitHub for version control
-
----
-
-## Contributing
-
-Contributions are welcome! Please:
-
-- Fork the repo
-- Create feature branches
-- Submit pull requests with clear descriptions
-- Follow coding style guidelines
-
----
-
-## License
-
-This project is licensed under the MIT License.
-
----
-
-## Contact
-
-Created by Danish Mir - feel free to reach out for questions or collaborations!
-
+# Contact
+Created by Danish Mir - feel free to reach out with any questions or collaboration ideas!
