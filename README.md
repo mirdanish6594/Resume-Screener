@@ -1,7 +1,5 @@
 # AI-Powered Resume Screener
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 An intelligent application designed to automate the initial stages of recruitment. This tool predicts a candidate's most likely job role from their resume and provides detailed, AI-driven feedback to help them improve it.
 
 The project features a decoupled architecture with a Python/FastAPI backend for core model inference and a React frontend for user interaction and advanced analysis via the Hugging Face API.
@@ -23,7 +21,7 @@ The project features a decoupled architecture with a Python/FastAPI backend for 
 ---
 
 ## Live Demo
-**(Add your Netlify deployment link here)**
+**([https://resumescreenerai.netlify.app/])**
 
 ---
 
