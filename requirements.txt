@@ -252,3 +252,6 @@ fastapi>=0.95.2
 uvicorn>=0.22.0
 python-multipart>=0.0.6
 python-docx==1.1.2
+google-generativeai
+sentence-transformers
+faiss-cpu
