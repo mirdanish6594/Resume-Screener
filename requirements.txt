@@ -1,5 +1,3 @@
-# A cleaner requirements.txt
-
 # Core web framework
 fastapi
 uvicorn
@@ -19,7 +17,3 @@ google-generativeai
 sentence-transformers
 faiss-cpu
 python-dotenv
-
-# MLOps (optional, if you use them directly)
-mlflow
-dvc
