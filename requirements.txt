@@ -1,8 +1,16 @@
-# Core web framework
-fastapi
-uvicorn
+# A clean and locked requirements.txt file
 
-# Machine Learning & Data
+# Core web framework
+fastapi==0.115.12
+uvicorn==0.34.2
+
+# Celery and its dependencies (locked for compatibility)
+celery==5.2.7
+redis==4.3.4
+kombu==5.2.4
+eventlet
+
+# Machine Learning & Data (pinning sklearn)
 scikit-learn==1.6.1
 pandas
 numpy
